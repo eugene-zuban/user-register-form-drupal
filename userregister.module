@@ -1,0 +1,127 @@
+<?php
+
+/**
+ * @file
+ * Provides addons to the user register form
+ */
+
+/**
+ * Implements hook_form_FORM_ID_alter() for the registration form.
+ */
+function userregister_form_user_register_form_alter(&$form, &$form_state) {
+  $form['account']['name']['#description'] = 'В качестве имени пользователя разрешено использовать только латинские буквы и цифры без пробелов. Минимальная длина имени пользователя 4 символа.';
+
+  $form['profile_wholesale_profile']['#states'] = array(
+    'visible' => array(
+      '#edit-field-registration-type-und' => array('value' => '2'),
+    ),
+  );
+
+  $form['profile_wholesale_profile']['field_organozation_type']['#states'] = array(
+    'required' => array(
+      '#edit-field-registration-type-und' => array('value' => '2'),
+    ),
+  );
+
+  $form['profile_wholesale_profile']['field_org_name']['#states'] = array(
+    'required' => array(
+      '#edit-field-registration-type-und' => array('value' => '2'),
+    ),
+  );
+
+  $form['profile_wholesale_profile']['field_org_phone']['#states'] = array(
+    'required' => array(
+      '#edit-field-registration-type-und' => array('value' => '2'),
+    ),
+  );
+
+  $form['profile_wholesale_profile']['field_org_inn']['#states'] = array(
+    'required' => array(
+      '#edit-field-registration-type-und' => array('value' => '2'),
+    ),
+  );
+
+  $form['profile_wholesale_profile']['field_org_town']['#states'] = array(
+    'required' => array(
+      '#edit-field-registration-type-und' => array('value' => '2'),
+    ),
+  );
+
+  $form['profile_wholesale_profile']['field_org_e_mail']['#states'] = array(
+    'required' => array(
+      '#edit-field-registration-type-und' => array('value' => '2'),
+    ),
+  );
+
+  $form['profile_wholesale_profile']['field_org_orgnip']['#states'] = array(
+    'required' => array(
+      '#edit-field-registration-type-und' => array('value' => '2'),
+    ),
+  );
+
+  //create custom validator
+  $form['#validate'][] = 'userregister_validate';
+}
+
+/**
+ * Validate
+ */
+function userregister_validate(&$form, &$form_state) {
+  $name = $form_state['values']['name'];
+  if (strlen($name) < 4) {
+    form_set_error('name', 'Имя пользоватлея слишком короткое, используйте имя больше 4-х символов');
+  }
+  if (!preg_match('/^[a-zA-Z0-9-]+$/u', $name)) {
+    form_set_error('name', 'В имени пользователя содержаться недопустимые символы. Используйте только латинские символы без пробелов');
+  }
+  if (substr($name, 0, 1) == '-') {
+    form_set_error('name', 'Имя пользователя не может начиться с - .');
+  }
+  if (substr($name, -1) == '-') {
+    form_set_error('name', 'Имя пользователя не может заканчиваться на - .');
+  }
+
+  //Если регистрируется как оптовик, то проверяем, чтобы все поля были заполнены
+  if ($form_state['values']['field_registration_type']['und'][0]['value'] == 2) {
+    if (!isset($form_state['values']['profile_wholesale_profile']['field_organozation_type']['und'][0]['value'])) {
+      form_set_error('profile_wholesale_profile][field_organozation_type', 'Поле тип организации обязательно для заполнения');
+    }
+
+    if (empty($form_state['values']['profile_wholesale_profile']['field_org_name']['und'][0]['value'])) {
+      form_set_error('profile_wholesale_profile][field_org_name', 'Поле Наименование обязательно для заполнения');
+    }
+
+    if (empty($form_state['values']['profile_wholesale_profile']['field_org_phone']['und'][0]['value'])) {
+      form_set_error('profile_wholesale_profile][field_org_phone', 'Поле Контактный телефон обязательно для заполнения');
+    }
+
+    if (empty($form_state['values']['profile_wholesale_profile']['field_org_inn']['und'][0]['value'])) {
+      form_set_error('profile_wholesale_profile][field_org_inn', 'Поле ИНН обязательно для заполнения');
+    }
+
+    if (empty($form_state['values']['profile_wholesale_profile']['field_org_town']['und'][0]['value'])) {
+      form_set_error('profile_wholesale_profile][field_org_town', 'Поле Город обязательно для заполнения');
+    }
+
+    if (empty($form_state['values']['profile_wholesale_profile']['field_org_e_mail']['und'][0]['email'])) {
+      form_set_error('profile_wholesale_profile][field_org_e_mail', 'Поле E-mail обязательно для заполнения');
+    }
+
+    if (empty($form_state['values']['profile_wholesale_profile']['field_org_orgnip']['und'][0]['value'])) {
+      form_set_error('profile_wholesale_profile][field_org_orgnip', 'Поле ОГРН обязательно для заполнения');
+    }
+
+  }
+}
+
+function userregister_form_alter(&$form, &$form_state, $form_id) {
+  switch ($form_id) {
+    //user profile form
+    case 'user_profile_form':
+      global $user;
+      if ($user->uid != 1) {
+        $form['field_registration_type']['und']['#disabled'] = TRUE;
+      }
+      break;
+  }
+}

@@ -1,0 +1,1 @@
+This module makes changes in the registration form
