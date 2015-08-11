@@ -9,7 +9,7 @@
  * Implements hook_form_FORM_ID_alter() for the registration form.
  */
 function userregister_form_user_register_form_alter(&$form, &$form_state) {
-  $form['account']['name']['#description'] = 'В качестве имени пользователя разрешено использовать только латинские буквы и цифры без пробелов. Минимальная длина имени пользователя 4 символа.';
+  $form['account']['name']['#description'] = 'You can use only latin letters and numbers without spaces. The minimum length are 4 characters.';
 
   $form['profile_wholesale_profile']['#states'] = array(
     'visible' => array(
@@ -69,46 +69,46 @@ function userregister_form_user_register_form_alter(&$form, &$form_state) {
 function userregister_validate(&$form, &$form_state) {
   $name = $form_state['values']['name'];
   if (strlen($name) < 4) {
-    form_set_error('name', 'Имя пользоватлея слишком короткое, используйте имя больше 4-х символов');
+    form_set_error('name', 'The user name length must be 4 or more characters.');
   }
   if (!preg_match('/^[a-zA-Z0-9-]+$/u', $name)) {
-    form_set_error('name', 'В имени пользователя содержаться недопустимые символы. Используйте только латинские символы без пробелов');
+    form_set_error('name', 'Incorrect characters in the user name.');
   }
   if (substr($name, 0, 1) == '-') {
-    form_set_error('name', 'Имя пользователя не может начиться с - .');
+    form_set_error('name', 'User name cant start with - .');
   }
   if (substr($name, -1) == '-') {
-    form_set_error('name', 'Имя пользователя не может заканчиваться на - .');
+    form_set_error('name', 'User name cant end with - .');
   }
 
-  //Если регистрируется как оптовик, то проверяем, чтобы все поля были заполнены
+  //If the user is wholesale buyer, need to check that all fields are filled.
   if ($form_state['values']['field_registration_type']['und'][0]['value'] == 2) {
     if (!isset($form_state['values']['profile_wholesale_profile']['field_organozation_type']['und'][0]['value'])) {
-      form_set_error('profile_wholesale_profile][field_organozation_type', 'Поле тип организации обязательно для заполнения');
+      form_set_error('profile_wholesale_profile][field_organozation_type', 'The organizations type field is required.');
     }
 
     if (empty($form_state['values']['profile_wholesale_profile']['field_org_name']['und'][0]['value'])) {
-      form_set_error('profile_wholesale_profile][field_org_name', 'Поле Наименование обязательно для заполнения');
+      form_set_error('profile_wholesale_profile][field_org_name', 'The organizations title field is required.');
     }
 
     if (empty($form_state['values']['profile_wholesale_profile']['field_org_phone']['und'][0]['value'])) {
-      form_set_error('profile_wholesale_profile][field_org_phone', 'Поле Контактный телефон обязательно для заполнения');
+      form_set_error('profile_wholesale_profile][field_org_phone', 'The organizations phone number field is required.');
     }
 
     if (empty($form_state['values']['profile_wholesale_profile']['field_org_inn']['und'][0]['value'])) {
-      form_set_error('profile_wholesale_profile][field_org_inn', 'Поле ИНН обязательно для заполнения');
+      form_set_error('profile_wholesale_profile][field_org_inn', 'The organizations INN field is required.');
     }
 
     if (empty($form_state['values']['profile_wholesale_profile']['field_org_town']['und'][0]['value'])) {
-      form_set_error('profile_wholesale_profile][field_org_town', 'Поле Город обязательно для заполнения');
+      form_set_error('profile_wholesale_profile][field_org_town', 'The organizations city field is required.');
     }
 
     if (empty($form_state['values']['profile_wholesale_profile']['field_org_e_mail']['und'][0]['email'])) {
-      form_set_error('profile_wholesale_profile][field_org_e_mail', 'Поле E-mail обязательно для заполнения');
+      form_set_error('profile_wholesale_profile][field_org_e_mail', 'The organizations E-mail field is required.');
     }
 
     if (empty($form_state['values']['profile_wholesale_profile']['field_org_orgnip']['und'][0]['value'])) {
-      form_set_error('profile_wholesale_profile][field_org_orgnip', 'Поле ОГРН обязательно для заполнения');
+      form_set_error('profile_wholesale_profile][field_org_orgnip', 'The organizations ORGNIP field is required.');
     }
 
   }
