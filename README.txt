@@ -1,4 +1,4 @@
-Simple module, that demonstrates the using of Drupal hooks for changing the user registration form:
+Simple module, that demonstrates the using of Drupal 7 hooks for changing the user registration form:
 
 * adding new fields
 * adding new checking & validating rules for user registration fields
